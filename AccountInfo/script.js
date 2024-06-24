@@ -21,21 +21,21 @@ document.getElementById('connectButton').addEventListener('click', async () => {
                 const web3 = new Web3(window.ethereum);
 
                 // Replace with the Filecoin Calibration testnet RPC URL
-                const filecoinRPC = 'https://filecoin-calibration.chainup.net/rpc/v1';
+                const filecoinRPC = 'https://bsc-testnet-rpc.publicnode.com';
 
                 // Add Filecoin Calibration Testnet chain to MetaMask
                 await ethereum.request({
                     method: 'wallet_addEthereumChain',
                     params: [{
-                        chainId: web3.utils.toHex(314159),
-                        chainName: 'Filecoin - Calibration testnet',
+                        chainId: "0x61",
+                        chainName: 'BNB Smart Chain Testnet',
                         nativeCurrency: {
-                            name: 'tFIL',
-                            symbol: 'tFIL',
+                            name: 'tBNB',
+                            symbol: 'tBNB',
                             decimals: 18,
                         },
                         rpcUrls: [filecoinRPC],
-                        blockExplorerUrls: ['https://calibration.filscan.io']
+                        blockExplorerUrls: ['https://testnet.bscscan.com/']
                     }]
                 });
 
@@ -112,7 +112,7 @@ document.getElementById('transferTokenForm').addEventListener('submit', async (e
     const account = window.account;
 
     // Replace with your ERC-20 token contract address and ABI
-    const tokenAddress = '0x18bceD2BFbf5Bf9dAa2dc73A0Eaf0b902df00a85';
+    const tokenAddress = '0xFe9144e789D59953D6BE6c6b715C4CdE9ddF53F6';
     const tokenABI = [
         {
             "inputs": [

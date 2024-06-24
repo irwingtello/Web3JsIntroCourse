@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transferir Tokens</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+</head>
+<body>
+    <h1>Transferir Tokens</h1>
+    <label for="fromAddress">Dirección de Origen:</label>
+    <input type="text" id="fromAddress" placeholder="0x..." readonly><br>
+    <label for="toAddress">Dirección de Destino:</label>
+    <input type="text" id="toAddress" placeholder="0x..."><br>
+    <label for="amount">Cantidad:</label>
+    <input type="number" id="amount" placeholder="0"><br>
+    <button onclick="transferTokens()">Transferir</button>
+
+    <script>
+        let web3;
+        let myContract;
+
+        window.addEventListener('load', async () => {
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                try {
+                    await ethereum.request({ method: 'eth_requestAccounts' });
+                    const accounts = await web3.eth.getAccounts();
+                    document.getElementById('fromAddress').value = accounts[0];
+
+                    const contractAddress = "0xFe9144e789D59953D6BE6c6b715C4CdE9ddF53F6";  // Reemplaza con tu dirección de contrato
+                    const contractABI = [
+                        {
+                            "constant": false,
+                            "inputs": [
+                                {
+                                    "name": "to",
+                                    "type": "address"
+                                },
+                                {
+                                    "name": "value",
+                                    "type": "uint256"
+                                }
+                            ],
+                            "name": "transfer",
+                            "outputs": [
+                                {
+                                    "name": "",
+                                    "type": "bool"
+                                }
+                            ],
+                            "payable": false,
+                            "stateMutability": "nonpayable",
+                            "type": "function"
+                        }
+                    ];
+
+                    myContract = new web3.eth.Contract(contractABI, contractAddress);
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            } else {
+                alert('Por favor, instala Metamask.');
+            }
+        });
+
+        async function transferTokens() {
+            const toAddress = document.getElementById("toAddress").value;
+            const amount = document.getElementById("amount").value;
+            const amountInWei = web3.utils.toWei(amount.toString(), 'ether'); // Ajusta según la decimalidad de tu token
+            const fromAddress = document.getElementById("fromAddress").value;
+
+            if (!web3.utils.isAddress(toAddress)) {
+                alert("Dirección de destino no válida.");
+                return;
+            }
+
+            try {
+                myContract.methods.transfer(toAddress, amountInWei).send({ from: fromAddress })
+                .on('transactionHash', function(hash) {
+                    console.log('Transaction Hash:', hash);
+                })
+                .on('receipt', function(receipt) {
+                    console.log('Receipt:', receipt);
+                    alert('Transferencia completada con éxito.');
+                })
+                .on('error', function(error, receipt) {
+                    console.error('Error:', error);
+                    alert('Ocurrió un error durante la transferencia.');
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Ocurrió un error durante la transferencia.');
+            }
+        }
+    </script>
+</body>
+</html>
